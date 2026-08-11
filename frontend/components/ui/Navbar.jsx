@@ -6,7 +6,7 @@ function Navbar() {
   return (
     <div className='flex font-serif justify-between items-center p-3'>
       <div className='flex items-center gap-3'>
-        <div className='bg-orange-600 text-black  w-12 h-12 flex justify-center rounded-lg  items-center'>
+        <div className='bg-orange-600 text-black w-12 h-12 flex justify-center rounded-lg  items-center'>
           <SquareTerminal />
         </div>
         <div>
