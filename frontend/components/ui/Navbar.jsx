@@ -5,13 +5,13 @@ import { ModeToggle } from '../mode-toggle'
 
 function Navbar() {
   return (
-    <div className='flex font-serif justify-between items-center p-3'>
+    <div className='flex justify-between items-center p-3'>
       <div className='flex items-center gap-3'>
-        <div className='bg-orange-600 text-black w-12 h-12 flex justify-center rounded-lg  items-center'>
+        <div className='bg-lime-300 text-black w-12 h-12 flex justify-center rounded-lg  items-center'>
           <SquareTerminal />
         </div>
         <div>
-          <h1 className="text-3xl text-orange-600 font-semibold">CodeCritic</h1>
+          <h1 className="text-3xl text-lime-300 font-semibold">CodeCritic</h1>
           <p className='flex'>Peer Code Review Platform</p>
         </div>
       </div >
@@ -19,7 +19,7 @@ function Navbar() {
         <Show when="signed-out">
           <SignInButton />
           <SignUpButton>
-            <button className="bg-orange-600 text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
+            <button className="bg-lime-300 text-black rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
               Sign Up
             </button>
           </SignUpButton>
