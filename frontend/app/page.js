@@ -24,7 +24,7 @@ export default function HomePage() {
         <h1 className="text-3xl font-bold">Code Review Feed</h1>
         <Link 
           href="/submissions/new" 
-          className="bg-lime-500 text-black font-semibold px-4 py-2 rounded-lg hover:bg-lime-600 transition"
+          className="bg-lime-400 text-black font-semibold px-4 py-2 rounded-lg hover:bg-lime-600 transition"
         >
           + Post Request
         </Link>
@@ -32,12 +32,12 @@ export default function HomePage() {
 
       <div className="grid gap-4">
         {sampleSubmissions.map((sub) => (
-          <div key={sub.id} className="border p-5 rounded-lg shadow-sm bg-white">
-            <h2 className="text-xl font-semibold mb-2">{sub.title}</h2>
+          <div key={sub.id} className="border p-5 rounded-lg shadow-sm bg-gray-100">
+            <h2 className="text-xl text-black font-semibold mb-2">{sub.title}</h2>
             <p className="text-gray-600 mb-3">{sub.description}</p>
             <div className="flex gap-2 mb-4">
               {sub.techStack.map((tech) => (
-                <span key={tech} className="bg-gray-100 text-xs px-2 py-1 rounded border">
+                <span key={tech} className="bg-gray-100 text-black text-xs px-2 py-1 border-mist-300 rounded border-3">
                   {tech}
                 </span>
               ))}
