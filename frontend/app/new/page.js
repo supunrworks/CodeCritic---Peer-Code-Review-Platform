@@ -69,16 +69,6 @@ export default function NewSubmissionPage() {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Avatar URL (optional)</label>
-            <input
-              type="url"
-              className="w-full border rounded-lg p-2.5 text-sm border-mauve-500"
-              value={formData.avatar}
-              onChange={(e) => setFormData({ ...formData, avatar: e.target.value })}
-              placeholder="https://example.com/avatar.jpg"
-            />
-          </div>
-          <div>
             <label className="block text-sm font-medium mb-1">Repository / Code Link</label>
             <input
               type="url"
