@@ -1,47 +1,33 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE_URL = 'http://localhost:5000/api';
 
-async function request(path, options = {}, token = null) {
-    const res = await fetch(`${API_URL}${path}`, {
-        ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...options.headers,
-        },
-    });
-
-    if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body.error || `Request failed: ${res.status}`);
-    }
-
-    return res.json();
+// 1. All Submissions 
+export async function fetchSubmissions() {
+  const res = await fetch(`${API_BASE_URL}/submissions`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to fetch submissions');
+  return res.json();
 }
 
-export const api = {
-    getFeed: (params = {}, token) =>
-        request("/api/submissions", { method: "GET" }, token),
+export const getSubmissions = fetchSubmissions;
 
-    createSubmission: (data, token) =>
-        request(
-            "/api/submissions",
-            {
-                method: "POST",
-                body: JSON.stringify(data),
-            },
-            token
-        ),
+// 2. Submission by ID 
+export async function getSubmissionById(id) {
+  const res = await fetch(`${API_BASE_URL}/submissions/${id}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error('Failed to fetch submission details');
+  return res.json();
+}
 
-    submitReview: (submissionId, data, token) =>
-        request(
-            `/api/submissions/${submissionId}/reviews`,
-            {
-                method: "POST",
-                body: JSON.stringify(data),
-            },
-            token
-        ),
+export const fetchSubmissionById = getSubmissionById;
 
-    getProfile: (username) =>
-        request(`/api/users/${username}`),
-};
+// 3. Create Submission
+export async function createSubmission(data) {
+  const res = await fetch(`${API_BASE_URL}/submissions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) throw new Error('Failed to create submission');
+  return res.json();
+}
