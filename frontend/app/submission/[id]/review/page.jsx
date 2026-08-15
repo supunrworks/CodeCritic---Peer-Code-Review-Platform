@@ -94,7 +94,7 @@ export default function ReviewPage() {
               onChange={(e) => setStrengths(e.target.value)}
               required
               rows={8}
-              className="min-h-[180px] w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              className="min-h-45 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               placeholder="What did they do well?"
             />
           </div>
@@ -113,7 +113,7 @@ export default function ReviewPage() {
               onChange={(e) => setImprovements(e.target.value)}
               required
               rows={8}
-              className="min-h-[180px] w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              className="min-h-45 w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               placeholder="What could be improved?"
             />
           </div>
