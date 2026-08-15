@@ -1,5 +1,8 @@
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
+const { verifyToken } = require('@clerk/backend');
 
 const app = express();
 const PORT = 5000;
@@ -7,6 +10,27 @@ const PORT = 5000;
 // Middlewares
 app.use(cors());
 app.use(express.json());
+
+// Clerk Token Verification Middleware
+const requireAuth = async (req, res, next) => {
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+
+  if (!token) {
+    return res.status(401).json({ message: 'Missing authorization token' });
+  }
+
+  try {
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY,
+    });
+    req.user = payload;
+    next();
+  } catch (error) {
+    console.error('Token verification failed:', error.message);
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+};
 
 // Dummy Data Store 
 let submissions = [
@@ -27,12 +51,14 @@ app.get('/api/submissions', (req, res) => {
   res.json(submissions);
 });
 
-// 2. Add a new submission
-app.post('/api/submissions', (req, res) => {
+// 2. Add a new submission (Protected)
+app.post('/api/submissions', requireAuth, (req, res) => {
   const newSubmission = {
     id: Date.now().toString(),
     ...req.body,
+    userId: req.user.sub, // Store Clerk user ID
     avatar: req.body.avatar || '',
+    author: req.body.author || req.user.firstName || req.user.email || 'Anonymous',
     createdAt: new Date().toISOString()
   };
   submissions.unshift(newSubmission);

@@ -1,5 +1,11 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
+// Helper to get Clerk token (for use in client components)
+export async function getClerkToken() {
+  const { getToken } = await import('@clerk/nextjs');
+  return await getToken();
+}
+
 // 1. All Submissions
 export async function fetchSubmissions() {
   const res = await fetch(`${API_BASE_URL}/submissions`, { cache: 'no-store' });
@@ -18,21 +24,29 @@ export async function getSubmissionById(id) {
 
 export const fetchSubmissionById = getSubmissionById;
 
-// 3. Create Submission
-export async function createSubmission(data) {
+// 3. Create Submission (Protected - requires auth token)
+export async function createSubmission(data, token) {
+  if (!token) {
+    throw new Error('Authentication token is required');
+  }
+
   const res = await fetch(`${API_BASE_URL}/submissions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
 
-  if (!res.ok) throw new Error('Failed to create submission');
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Failed to create submission');
+  }
   return res.json();
 }
 
-// 4. Submit a review for a submission
+// 4. Submit a review for a submission (Protected - requires auth token)
 export const api = {
   getSubmission: async function (id, token) {
     const headers = {
@@ -49,6 +63,10 @@ export const api = {
     return res.json();
   },
   submitReview: async function (submissionId, reviewData, token) {
+    if (!token) {
+      throw new Error('Authentication token is required to submit a review');
+    }
+
     const res = await fetch(`${API_BASE_URL}/submissions/${submissionId}/reviews`, {
       method: 'POST',
       headers: {
