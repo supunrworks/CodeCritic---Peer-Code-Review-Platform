@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@clerk/nextjs';
+import { useUser, useAuth } from '@clerk/nextjs';
 import { createSubmission } from '@/lib/api';
 
 const DEFAULT_AVATAR = 'https://github.com/shadcn.png';
@@ -10,6 +10,7 @@ const DEFAULT_AVATAR = 'https://github.com/shadcn.png';
 export default function NewSubmissionPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
+  const { getToken } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     language: '',
@@ -37,16 +38,25 @@ export default function NewSubmissionPage() {
     e.preventDefault();
     setLoading(true);
     try {
+      const token = await getToken();
+      if (!token) {
+        throw new Error('Authentication required. Please sign in again.');
+      }
+
       const submission = {
-        ...formData,
+        title: formData.title,
+        language: formData.language,
+        code: formData.code,
+        description: formData.description,
+        author: formData.author || 'Anonymous',
         avatar: formData.avatar || DEFAULT_AVATAR,
-        author: formData.author || 'Anonymous'
       };
 
-      await createSubmission(submission);
+      await createSubmission(submission, token);
       router.push('/');
     } catch (err) {
       console.error(err);
+      alert(`Error: ${err.message}`);
       setLoading(false);
     }
   };
