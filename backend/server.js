@@ -1,3 +1,4 @@
+const { prisma } = require('./lib/prisma');
 require('dotenv').config();
 
 const express = require('express');
@@ -7,7 +8,6 @@ const { verifyToken } = require('@clerk/backend');
 const app = express();
 const PORT = 5000;
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 
@@ -32,52 +32,91 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
-// Dummy Data Store 
-let submissions = [
-  {
-    id: "1",
-    title: "Refactoring React Custom Hook for Auth",
-    language: "JavaScript",
-    code: "https://github.com/example/react-auth-hook",
-    description: "Looking for code review on performance and readability.",
-    author: "Gagana",
-    avatar: "https://github.com/shadcn.png",
-    createdAt: new Date().toISOString()
+// 1. Get all submissions
+app.get('/api/submissions', async (req, res) => {
+  try {
+    const submissions = await prisma.submission.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { reviews: true, user: true }
+    });
+    res.json(submissions);
+  } catch (error) {
+    console.error("Error fetching submissions:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-];
-
-// 1. Get all submissions FOR FEED API
-app.get('/api/submissions', (req, res) => {
-  res.json(submissions);
 });
 
-// 2. Add a new submission (Protected)
-app.post('/api/submissions', requireAuth, (req, res) => {
-  const newSubmission = {
-    id: Date.now().toString(),
-    ...req.body,
-    userId: req.user.sub, // Store Clerk user ID
-    avatar: req.body.avatar || '',
-    author: req.body.author || req.user.firstName || req.user.email || 'Anonymous',
-    createdAt: new Date().toISOString()
-  };
-  submissions.unshift(newSubmission);
-  res.status(201).json(newSubmission);
-});
+// 2. Create a submission
+app.post('/api/submissions', requireAuth, async (req, res) => {
+  try {
+    const user = await prisma.user.upsert({
+      where: { clerkId: req.user.sub },
+      update: {},
+      create: {
+        clerkId: req.user.sub,
+        email: req.user.email || null,
+        name: req.user.firstName || req.user.email || 'Anonymous',
+      }
+    });
 
-// 3. Get submission by ID (Fixed String matching)
-app.get('/api/submissions/:id', (req, res) => {
-  const { id } = req.params;
-  const submission = submissions.find((s) => String(s.id) === String(id));
-  
-  if (!submission) {
-    return res.status(404).json({ message: 'Submission not found' });
+    const submission = await prisma.submission.create({
+      data: {
+        title: req.body.title,
+        language: req.body.language,
+        code: req.body.code,
+        description: req.body.description,
+        author: req.body.author || user.name || 'Anonymous',
+        avatar: req.body.avatar || '',
+        userId: user.id,
+      }
+    });
+
+    res.status(201).json(submission);
+  } catch (error) {
+    console.error("Error creating submission:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
-  
-  res.json(submission);
 });
 
-// Server run
+// 3. Submit a review and add +2 Karma points
+app.post('/api/submissions/:id/reviews', requireAuth, async (req, res) => {
+  try {
+    const reviewUser = await prisma.user.upsert({
+      where: { clerkId: req.user.sub },
+      update: {},
+      create: {
+        clerkId: req.user.sub,
+        email: req.user.email || null,
+        name: req.user.firstName || 'Anonymous',
+      }
+    });
+
+    const review = await prisma.review.create({
+      data: {
+        submissionId: req.params.id,
+        reviewerId: reviewUser.id,
+        strengths: req.body.strengths || '',
+        improvements: req.body.improvements || '',
+      }
+    });
+
+    // Reviewer karma+2 add
+    await prisma.user.update({
+      where: { id: reviewUser.id },
+      data: {
+        karma: {
+          increment: 2
+        }
+      }
+    });
+
+    res.status(201).json(review);
+  } catch (error) {
+    console.error("Error creating review:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.listen(PORT, () => {
-  console.log(`Backend Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
