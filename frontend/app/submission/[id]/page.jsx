@@ -2,8 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { api } from "@/lib/api";
 
 export default async function SubmissionPage({ params }) {
-  const { getToken, userId } = auth();
-  const token = userId ? await getToken() : null;
+  const { userId, getToken } = await auth();
+  const token = userId ? await getToken({ forceRefresh: true }) : null;
 
   let submission = null;
 

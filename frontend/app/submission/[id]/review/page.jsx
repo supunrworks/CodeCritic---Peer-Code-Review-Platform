@@ -9,7 +9,7 @@ export default function ReviewPage() {
   const router = useRouter();
   const params = useParams();
   const submissionId = params.id;
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   const [strengths, setStrengths] = useState("");
   const [improvements, setImprovements] = useState("");
@@ -24,7 +24,11 @@ export default function ReviewPage() {
     setLoading(true);
 
     try {
-      const token = await getToken();
+      if (!isSignedIn) {
+        throw new Error("Not signed in");
+      }
+
+      const token = await getToken({ forceRefresh: true });
 
       if (!token) {
         throw new Error("Not signed in");

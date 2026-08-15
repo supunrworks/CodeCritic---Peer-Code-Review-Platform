@@ -8,9 +8,17 @@ export async function getClerkToken() {
 
 // 1. All Submissions
 export async function fetchSubmissions() {
-  const res = await fetch(`${API_BASE_URL}/submissions`, { cache: 'no-store' });
-  if (!res.ok) throw new Error('Failed to fetch submissions');
-  return res.json();
+  try {
+    const res = await fetch(`${API_BASE_URL}/submissions`, { cache: 'no-store' });
+    if (!res.ok) {
+      const error = await res.text();
+      throw new Error(`HTTP ${res.status}: ${error || 'Failed to fetch submissions'}`);
+    }
+    return res.json();
+  } catch (error) {
+    console.error('Fetch error:', error);
+    throw error;
+  }
 }
 
 export const getSubmissions = fetchSubmissions;

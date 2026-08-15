@@ -10,7 +10,7 @@ const DEFAULT_AVATAR = 'https://github.com/shadcn.png';
 export default function NewSubmissionPage() {
   const router = useRouter();
   const { user, isLoaded } = useUser();
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
   const [formData, setFormData] = useState({
     title: '',
     language: '',
@@ -38,7 +38,11 @@ export default function NewSubmissionPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const token = await getToken();
+      if (!isLoaded || !isSignedIn) {
+        throw new Error('Authentication required. Please sign in again.');
+      }
+
+      const token = await getToken({ forceRefresh: true });
       if (!token) {
         throw new Error('Authentication required. Please sign in again.');
       }

@@ -32,27 +32,6 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
-// Clerk Token Verification Middleware
-const requireAuth = async (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ message: 'Missing authorization token' });
-  }
-
-  try {
-    const payload = await verifyToken(token, {
-      secretKey: process.env.CLERK_SECRET_KEY,
-    });
-    req.user = payload;
-    next();
-  } catch (error) {
-    console.error('Token verification failed:', error.message);
-    return res.status(401).json({ message: 'Invalid or expired token' });
-  }
-};
-
 // 1. Get all submissions
 app.get('/api/submissions', async (req, res) => {
   try {
