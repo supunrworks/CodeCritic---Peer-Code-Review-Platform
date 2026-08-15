@@ -57,7 +57,7 @@ export default function ReviewPage() {
         token
       );
 
-      router.push(`/submissions/${submissionId}`);
+      router.push(`/submission/${submissionId}`);
       router.refresh();
     } catch (err) {
       setError(err.message);

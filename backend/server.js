@@ -46,6 +46,31 @@ app.get('/api/submissions', async (req, res) => {
   }
 });
 
+// 1b. Get a single submission with its reviews
+app.get('/api/submissions/:id', async (req, res) => {
+  try {
+    const submission = await prisma.submission.findUnique({
+      where: { id: req.params.id },
+      include: {
+        user: true,
+        reviews: {
+          include: { reviewer: true },
+          orderBy: { createdAt: 'desc' }
+        }
+      }
+    });
+
+    if (!submission) {
+      return res.status(404).json({ error: 'Submission not found' });
+    }
+
+    res.json(submission);
+  } catch (error) {
+    console.error('Error fetching submission:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // 2. Create a submission
 app.post('/api/submissions', requireAuth, async (req, res) => {
   try {
