@@ -6,7 +6,7 @@ const cors = require('cors');
 const { verifyToken } = require('@clerk/backend');
 
 const app = express();
-const PORT = 5000;
+const PORT = Number(process.env.PORT) || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -142,6 +142,6 @@ app.post('/api/submissions/:id/reviews', requireAuth, async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT}`);
 });
