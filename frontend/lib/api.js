@@ -34,6 +34,20 @@ export async function createSubmission(data) {
 
 // 4. Submit a review for a submission
 export const api = {
+  getSubmission: async function (id, token) {
+    const headers = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+    const res = await fetch(`${API_BASE_URL}/submissions/${id}`, {
+      headers,
+      cache: 'no-store',
+    });
+    if (!res.ok) throw new Error('Failed to fetch submission');
+    return res.json();
+  },
   submitReview: async function (submissionId, reviewData, token) {
     const res = await fetch(`${API_BASE_URL}/submissions/${submissionId}/reviews`, {
       method: 'POST',
