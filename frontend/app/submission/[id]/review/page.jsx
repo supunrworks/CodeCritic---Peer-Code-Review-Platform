@@ -67,62 +67,88 @@ export default function ReviewPage() {
   }
 
   return (
-    <div style={{ maxWidth: "600px" }}>
-      <h2>Write a Review</h2>
+    <div className="flex justify-center px-2 py-3">
+      <div className="w-full max-w-4xl rounded-2xl border border-gray-200 bg-white p-6 shadow-sm md:p-8">
+        <h2 className="mb-6 text-2xl font-bold text-gray-900">
+          Write a Review
+        </h2>
 
-      {error && (
-        <div style={{ color: "red", marginBottom: "1rem" }}>
-          {error}
-        </div>
-      )}
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Strengths</label>
-          <textarea
-            value={strengths}
-            onChange={(e) => setStrengths(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem" }}
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="strengths"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Feedback
+            </label>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Areas for Improvement</label>
-          <textarea
-            value={improvements}
-            onChange={(e) => setImprovements(e.target.value)}
-            style={{ width: "100%", padding: "0.5rem" }}
-            required
-          />
-        </div>
+            <textarea
+              id="strengths"
+              value={strengths}
+              onChange={(e) => setStrengths(e.target.value)}
+              required
+              rows={8}
+              className="min-h-[180px] w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              placeholder="What did they do well?"
+            />
+          </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Resource URLs (comma-separated)</label>
-          <input
-            type="text"
-            value={resourceUrls}
-            onChange={(e) => setResourceUrls(e.target.value)}
-            placeholder="https://example.com, https://docs.com"
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </div>
+          <div>
+            <label
+              htmlFor="improvements"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Areas for Improvement
+            </label>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: "0.75rem 1.5rem",
-            backgroundColor: loading ? "#ccc" : "#28a745",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: loading ? "not-allowed" : "pointer",
-          }}
-        >
-          {loading ? "Submitting..." : "Submit Review"}
-        </button>
-      </form>
+            <textarea
+              id="improvements"
+              value={improvements}
+              onChange={(e) => setImprovements(e.target.value)}
+              required
+              rows={8}
+              className="min-h-[180px] w-full resize-none rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+              placeholder="What could be improved?"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="resourceUrls"
+              className="mb-2 block text-sm font-medium text-gray-700"
+            >
+              Resource URLs
+            </label>
+
+            <input
+              id="resourceUrls"
+              type="text"
+              value={resourceUrls}
+              onChange={(e) => setResourceUrls(e.target.value)}
+              placeholder="https://example.com, https://docs.com"
+              className="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+            />
+
+            <p className="mt-2 text-xs text-gray-500">
+              Enter multiple URLs separated by commas.
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full rounded-xl bg-green-600 px-6 py-4 text-base font-semibold text-white transition hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:bg-gray-300"
+          >
+            {loading ? "Submitting..." : "Submit Review"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
