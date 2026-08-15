@@ -1,26 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { createSubmission } from '@/lib/api';
+
+const DEFAULT_AVATAR = 'https://github.com/shadcn.png';
 
 export default function NewSubmissionPage() {
   const router = useRouter();
+  const { user, isLoaded } = useUser();
   const [formData, setFormData] = useState({
     title: '',
     language: '',
     code: '',
     description: '',
     author: '',
-    avatar: ''
+    avatar: DEFAULT_AVATAR
   });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isLoaded || !user) return;
+
+    const fullName = [user.firstName, user.lastName].filter(Boolean).join(' ') || user.username || 'Anonymous';
+    const avatarUrl = user.imageUrl || DEFAULT_AVATAR;
+
+    setFormData((prev) => ({
+      ...prev,
+      author: prev.author || fullName,
+      avatar: avatarUrl
+    }));
+  }, [isLoaded, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await createSubmission(formData);
+      const submission = {
+        ...formData,
+        avatar: formData.avatar || DEFAULT_AVATAR,
+        author: formData.author || 'Anonymous'
+      };
+
+      await createSubmission(submission);
       router.push('/');
     } catch (err) {
       console.error(err);

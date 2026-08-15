@@ -1,6 +1,6 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
-// 1. All Submissions 
+// 1. All Submissions
 export async function fetchSubmissions() {
   const res = await fetch(`${API_BASE_URL}/submissions`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch submissions');
@@ -9,7 +9,7 @@ export async function fetchSubmissions() {
 
 export const getSubmissions = fetchSubmissions;
 
-// 2. Submission by ID 
+// 2. Submission by ID
 export async function getSubmissionById(id) {
   const res = await fetch(`${API_BASE_URL}/submissions/${id}`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Failed to fetch submission details');
@@ -31,3 +31,24 @@ export async function createSubmission(data) {
   if (!res.ok) throw new Error('Failed to create submission');
   return res.json();
 }
+
+// 4. Submit a review for a submission
+export const api = {
+  submitReview: async function (submissionId, reviewData, token) {
+    const res = await fetch(`${API_BASE_URL}/submissions/${submissionId}/reviews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(reviewData),
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      throw new Error(errorText || 'Failed to submit review');
+    }
+
+    return res.json();
+  },
+};

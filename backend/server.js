@@ -17,7 +17,7 @@ let submissions = [
     code: "https://github.com/example/react-auth-hook",
     description: "Looking for code review on performance and readability.",
     author: "Gagana",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80",
+    avatar: "https://github.com/shadcn.png",
     createdAt: new Date().toISOString()
   }
 ];

@@ -5,6 +5,8 @@ import { getSubmissions } from '@/lib/api';
 import { Avatar, AvatarBadge, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
 
+const DEFAULT_AVATAR = 'https://github.com/shadcn.png';
+
 export default function Home() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ export default function Home() {
             <div key={item.id} className="border border-zinc-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition">
               <div className="flex items-center gap-3 mb-4">
                 <Avatar className="h-10 w-10 border border-zinc-200">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                  <AvatarImage src={item.avatar || DEFAULT_AVATAR} alt={item.author || 'User avatar'} />
                   <AvatarBadge className="bg-green-600 dark:bg-green-800" />
                   <AvatarFallback>
                     {(item.author || 'U').charAt(0).toUpperCase()}
