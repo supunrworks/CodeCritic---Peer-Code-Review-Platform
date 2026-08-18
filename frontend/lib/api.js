@@ -65,7 +65,7 @@ export const api = {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
-    const res = await fetch(`${API_BASE_URL}/submissions/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${id}`, {
       headers,
       cache: 'no-store',
     });
