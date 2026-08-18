@@ -1,48 +1,37 @@
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique
-  email     String?  @unique
-  name      String?
-  avatar    String?
-  karma     Int      @default(0)
-  createdAt DateTime @default(now())
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
 
+model User {
+  id        String       @id @default(uuid())
+  email     String       @unique
+  name      String?
   submissions Submission[]
-  reviews     Review[]
+  reviews   Review[]
 }
 
 model Submission {
-  id          String   @id @default(cuid())
-  title       String
-  language    String
-  code        String
-  description String
-  author      String
-  avatar      String?
-  userId      String
-  createdAt   DateTime @default(now())
-
-  user    User     @relation(fields: [userId], references: [id])
-  reviews Review[]
+  id        String   @id @default(uuid())
+  code      String
+  language  String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  reviews   Review[]
+  createdAt DateTime @default(now())
 }
 
 model Review {
-  id           String   @id @default(cuid())
+  id           String     @id @default(uuid())
   strengths    String?
   improvements String?
   submissionId String
+  submission   Submission @relation(fields: [submissionId], references: [id])
   reviewerId   String
-  createdAt    DateTime @default(now())
-
-  submission Submission @relation(fields: [submissionId], references: [id])
-  reviewer   User       @relation(fields: [reviewerId], references: [id])
+  reviewer     User       @relation(fields: [reviewerId], references: [id])
+  createdAt    DateTime   @default(now())
 }
