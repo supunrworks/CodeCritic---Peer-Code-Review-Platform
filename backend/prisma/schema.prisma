@@ -12,22 +12,25 @@ model User {
   clerkId     String       @unique
   email       String?      @unique
   name        String?
-  submissions Submission[]
+  avatar      String?
+  karma       Int          @default(0)
+  createdAt   DateTime     @default(now())
   reviews     Review[]
+  submissions Submission[]
 }
 
 model Submission {
   id          String   @id @default(uuid())
-  title       String?
-  code        String
+  title       String
   language    String
-  description String?
-  author      String?
+  code        String
+  description String
+  author      String
   avatar      String?
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  reviews     Review[]
   createdAt   DateTime @default(now())
+  reviews     Review[]
+  user        User     @relation(fields: [userId], references: [id])
 }
 
 model Review {
@@ -35,8 +38,8 @@ model Review {
   strengths    String?
   improvements String?
   submissionId String
-  submission   Submission @relation(fields: [submissionId], references: [id])
   reviewerId   String
-  reviewer     User       @relation(fields: [reviewerId], references: [id])
   createdAt    DateTime   @default(now())
+  reviewer     User       @relation(fields: [reviewerId], references: [id])
+  submission   Submission @relation(fields: [submissionId], references: [id])
 }
