@@ -1,5 +1,5 @@
-const { prisma } = require('./lib/prisma');
 require('dotenv').config();
+const { prisma } = require('./lib/prisma');
 
 const express = require('express');
 const cors = require('cors');
