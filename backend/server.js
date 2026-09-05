@@ -11,7 +11,6 @@ const PORT = Number(process.env.PORT) || 5000;
 app.use(cors({
   origin: [
     'https://code-critic-peer-code-review-platfo.vercel.app',
-    'https://code-critic-peer-code-review-platfo-beta.vercel.app',
     'http://localhost:3000',
   ],
 }));
