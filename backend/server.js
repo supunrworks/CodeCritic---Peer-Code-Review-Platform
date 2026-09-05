@@ -37,6 +37,27 @@ const requireAuth = async (req, res, next) => {
   }
 };
 
+// Get the signed-in user's karma
+app.get('/api/user/karma', requireAuth, async (req, res) => {
+  try {
+    const user = await prisma.user.upsert({
+      where: { clerkId: req.user.sub },
+      update: {},
+      create: {
+        clerkId: req.user.sub,
+        email: req.user.email || null,
+        name: req.user.firstName || req.user.email || 'Anonymous',
+      },
+      select: { karma: true },
+    });
+
+    res.json(user);
+  } catch (error) {
+    console.error('Error fetching user karma:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // 1. Get all submissions
 app.get('/api/submissions', async (req, res) => {
   try {
@@ -105,6 +126,41 @@ app.post('/api/submissions', requireAuth, async (req, res) => {
   } catch (error) {
     console.error("Error creating submission:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// Delete a submission owned by the signed-in user
+app.delete('/api/submissions/:id', requireAuth, async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: req.user.sub },
+    });
+
+    const submission = await prisma.submission.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!submission) {
+      return res.status(404).json({ error: 'Submission not found' });
+    }
+
+    if (!user || submission.userId !== user.id) {
+      return res.status(403).json({ error: 'You can only delete your own posts' });
+    }
+
+    await prisma.$transaction([
+      prisma.review.deleteMany({
+        where: { submissionId: submission.id },
+      }),
+      prisma.submission.delete({
+        where: { id: submission.id },
+      }),
+    ]);
+
+    res.status(204).send();
+  } catch (error) {
+    console.error('Error deleting submission:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 

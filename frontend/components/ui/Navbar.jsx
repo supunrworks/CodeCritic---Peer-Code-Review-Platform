@@ -1,9 +1,42 @@
-import React from 'react'
-import { Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
-import { SquareTerminal } from 'lucide-react'
+'use client';
+
+import React, { useEffect, useState } from 'react'
+import { Show, SignInButton, SignUpButton, UserButton, useAuth } from '@clerk/nextjs'
+import { Award, SquareTerminal } from 'lucide-react'
 import { ModeToggle } from '../mode-toggle'
+import { getUserKarma } from '@/lib/api'
 
 function Navbar() {
+  const { getToken, isSignedIn } = useAuth()
+  const [karma, setKarma] = useState(0)
+
+  useEffect(() => {
+    if (!isSignedIn) {
+      setKarma(0)
+      return
+    }
+
+    let active = true
+
+    async function loadKarma() {
+      try {
+        const token = await getToken()
+        if (!token) return
+
+        const user = await getUserKarma(token)
+        if (active) setKarma(user.karma)
+      } catch (error) {
+        console.error('Karma fetch error:', error)
+      }
+    }
+
+    loadKarma()
+
+    return () => {
+      active = false
+    }
+  }, [getToken, isSignedIn])
+
   return (
     <div className='flex justify-between items-center p-3'>
       <div className='flex items-center gap-3'>
@@ -25,7 +58,17 @@ function Navbar() {
           </SignUpButton>
         </Show>
         <Show when="signed-in">
-          <UserButton />
+          <div className='flex items-center gap-2'>
+            <div
+              className='flex items-center gap-1 rounded-full border border-lime-300/60 bg-lime-300/10 px-2.5 py-1 text-sm font-semibold text-lime-300'
+              title='Karma points'
+            >
+              <Award size={16} aria-hidden='true' />
+              <span>{karma}</span>
+              <span className='hidden sm:inline'>Karma</span>
+            </div>
+            <UserButton />
+          </div>
         </Show>
         <div className='scale-150'>
           <ModeToggle />

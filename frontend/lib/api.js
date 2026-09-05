@@ -25,6 +25,22 @@ export async function fetchSubmissions() {
 
 export const getSubmissions = fetchSubmissions;
 
+export async function getUserKarma(token) {
+  if (!token) {
+    throw new Error('Authentication token is required');
+  }
+
+  const res = await fetch(`${API_BASE_URL}/user/karma`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    cache: 'no-store',
+  });
+
+  if (!res.ok) throw new Error('Failed to fetch user karma');
+  return res.json();
+}
+
 // 2. Submission by ID
 export async function getSubmissionById(id) {
   const res = await fetch(`${API_BASE_URL}/submissions/${id}`, { cache: 'no-store' });
@@ -56,6 +72,24 @@ export async function createSubmission(data, token) {
   return res.json();
 }
 
+export async function deleteSubmission(id, token) {
+  if (!token) {
+    throw new Error('Authentication token is required');
+  }
+
+  const res = await fetch(`${API_BASE_URL}/submissions/${id}`, {
+    method: 'DELETE',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || 'Failed to delete submission');
+  }
+}
+
 // 4. Submit a review for a submission (Protected - requires auth token)
 export const api = {
   getSubmission: async function (id, token) {
@@ -65,7 +99,7 @@ export const api = {
     if (token) {
       headers.Authorization = `Bearer ${token}`;
     }
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/submissions/${id}`, {
+    const res = await fetch(`${API_BASE_URL}/submissions/${id}`, {
       headers,
       cache: 'no-store',
     });
