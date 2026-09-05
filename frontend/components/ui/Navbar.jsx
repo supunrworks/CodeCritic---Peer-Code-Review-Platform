@@ -38,39 +38,50 @@ function Navbar() {
   }, [getToken, isSignedIn])
 
   return (
-    <div className='flex justify-between items-center p-3'>
-      <div className='flex items-center gap-3'>
-        <div className='bg-lime-300 text-black w-12 h-12 flex justify-center rounded-lg  items-center'>
-          <SquareTerminal />
+    <div className="flex w-full items-center gap-3 overflow-x-hidden p-3">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-lime-300 text-black sm:size-12">
+          <SquareTerminal className="size-5 sm:size-6" />
         </div>
-        <div>
-          <h1 className="text-3xl text-lime-300 font-semibold">CodeCritic</h1>
-          <p className='flex'>Peer Code Review Platform</p>
+
+        <div className="min-w-0">
+          <h1 className="truncate text-xl font-semibold text-lime-300 sm:text-3xl">
+            CodeCritic
+          </h1>
+          <p className="hidden sm:flex">Peer Code Review Platform</p>
         </div>
-      </div >
-      <div className='flex items-center gap-5' >
-        <Show when="signed-out">
-          <SignInButton />
-          <SignUpButton>
-            <button className="bg-lime-300 hover:bg-lime-600 transition text-black rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-              Sign Up
-            </button>
-          </SignUpButton>
-        </Show>
-        <Show when="signed-in">
-          <div className='flex items-center gap-2'>
-            <div
-              className='flex items-center gap-1 rounded-full border border-lime-300/60 bg-lime-300/10 px-2.5 py-1 text-sm font-semibold text-lime-300'
-              title='Karma points'
-            >
-              <Award size={16} aria-hidden='true' />
-              <span>{karma}</span>
-              <span className='hidden sm:inline'>Karma</span>
+      </div>
+
+      <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-5">
+        <div className="flex items-center gap-2 sm:gap-5">
+          <Show when="signed-out">
+            <SignInButton mode="modal">
+              <button className="inline-flex h-8 shrink-0 items-center justify-center whitespace-nowrap px-3 text-sm font-medium sm:h-10 sm:px-4">
+                Sign In
+              </button>
+            </SignInButton>
+
+            <SignUpButton mode="modal">
+              <button className="inline-flex h-8 shrink-0 items-center justify-center whitespace-nowrap rounded-full bg-lime-300 px-3 text-sm font-medium text-black transition hover:bg-lime-600 sm:h-10 sm:px-4">
+                Sign Up
+              </button>
+            </SignUpButton>
+          </Show>
+          <Show when="signed-in">
+            <div className='flex items-center gap-2'>
+              <div
+                className='flex items-center gap-1 rounded-full border border-lime-300/60 bg-lime-300/10 px-2 py-1 text-xs font-semibold text-lime-300'
+                title='Karma points'
+              >
+                <Award size={14} />
+                <span>{karma}</span>
+                <span className='hidden sm:inline'>Karma</span>
+              </div>
+              <UserButton />
             </div>
-            <UserButton />
-          </div>
-        </Show>
-        <div className='scale-150'>
+          </Show>
+        </div>
+        <div className="scale-100 sm:scale-150">
           <ModeToggle />
         </div>
       </div>

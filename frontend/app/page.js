@@ -80,8 +80,23 @@ export default function Home() {
                   </AvatarFallback>
                 </Avatar>
 
-                <div>
-                  <p className="font-semibold text-sm">{item.author || 'Unknown author'}</p>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <p className="font-semibold text-sm">{item.author || 'Unknown author'}</p>
+
+                    {item.user?.clerkId === userId && (
+                      <button
+                        type="button"
+                        onClick={() => handleDelete(item.id)}
+                        className="text-red-600 transition hover:text-red-800"
+                        title="Delete post"
+                        aria-label={`Delete ${item.title}`}
+                      >
+                        <Trash2 size={17} />
+                      </button>
+                    )}
+                  </div>
+
                   <p className="text-xs text-zinc-500">
                     {item.createdAt
                       ? new Date(item.createdAt).toLocaleDateString('en-US', {
@@ -94,20 +109,6 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-start justify-between gap-4">
-                <h3 className="text-xl font-bold">{item.title}</h3>
-                {item.user?.clerkId === userId && (
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(item.id)}
-                    className="text-red-600 transition hover:text-red-800"
-                    title="Delete post"
-                    aria-label={`Delete ${item.title}`}
-                  >
-                    <Trash2 size={17} />
-                  </button>
-                )}
-              </div>
               <p className="text-zinc-300 text-sm mt-1">{item.description}</p>
 
               <div className="flex gap-2 my-4">
